@@ -73,3 +73,55 @@ Download Multi-Department-Business-Network.pkt and open in Cisco Packet Tracer 9
 This lab demostrates an internal business network. 
 Internet connectivity is not configured. Inter-VLAN traffic is allowed;
 the ACL restricts device administration. 
+
+
+---
+
+# Project 2: VLSM and Subnetting Upgrade
+
+The original network is now being expanded by redesigning the IP addressing scheme using VLSM (Variable Length Subnet Masking).
+
+Instead of using three separate /24 networks, the departments now use subnets created from the 192.168.10.0/24 parent network.
+
+This upgrade uses different subnet sizes based on the needs of each department while maintaining VLAN separation, inter-VLAN routing, DHCP, and secure management access.
+
+
+### Updated Network Topology
+
+![VLSM Addressing Topology](screenshots/vlsm-addressing-topology.png)
+
+The updated topology uses VLSM to divide the 192.168.10.0/24 parent network into separate subnets for Sales, IT, and Management.
+
+
+### VLSM Addressing Plan
+
+| Department | VLAN | Subnet           | Default Gateway | Switch Ports |
+|---|---|---|---|---|
+| Sales      |  20  | 192.168.10.0/26  | 192.168.10.1    | Fa0/3-4      |
+| IT         |  30  | 192.168.10.64/27 | 192.168.10.65   | Fa0/5-6      |
+| Management |  10  | 192.168.10.96/28 | 192.168.10.97   | Fa0/1-2      |
+
+The switch management interface was updated to 192.168.10.98/28 on VLAN 10.
+
+### Configuration Changes
+
+The VLSM upgrade required several changes to the existing network configuration:
+
+- Updated the router subinterfaces with the new subnet gateways and subnet masks.
+- Reconfigured the DHCP pools so each VLAN receives addresses from its new subnet.
+- Updated the switch management interface to 192.168.10.98/28.
+- Updated the MGMT-ONLY ACL to permit only the Management subnet (192.168.10.96/28).
+- Renewed the DHCP addresses on all department PCs.
+- Verified inter-VLAN communication after the addressing changes.
+- Tested SSH access to confirm Management devices were allowed while Sales devices were denied.
+
+### Testing and Verification
+
+After the VLSM upgrade, the network was tested to verify that the new addressing scheme worked correctly.
+
+- All department PCs successfully received new IP addresses through DHCP.
+- Devices were able to communicate across VLANs using inter-VLAN routing.
+- The switch management interface was reachable from the Management subnet.
+- SSH access from the Management network was successful.
+- SSH access from the Sales network was denied as intended by the MGMT-ONLY ACL.
+- Router and switch configurations were saved after successful testing.
